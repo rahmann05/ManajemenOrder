@@ -2,12 +2,12 @@
 import { Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-defineProps({
+// [PERBAIKAN] Simpan props ke dalam variabel
+const props = defineProps({
     stats: Object,
     recent_orders: Array,
 });
 </script>
-
 <template>
     <AppLayout>
         
