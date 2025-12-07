@@ -14,11 +14,15 @@ return new class extends Migration
     Schema::create('dokumen_pengiriman', function (Blueprint $table) {
         $table->id('id_dokumen');
         $table->foreignId('order_id')->constrained('order', 'id_order')->onDelete('cascade');
-        $table->string('nomor_resi')->unique();
-        $table->text('kelengkapan_dokumen'); // Deskripsi atau checklist
-        $table->string('path_dokumen'); // Lokasi file
-        $table->foreignId('staff_gudang_id')->constrained('staff_gudang', 'id_staff_gudang');
-        $table->string('status'); // Valid/Invalid
+        
+        $table->string('jenis_dokumen'); // BL, Packing List, Invoice, Manifest
+        $table->string('path_file'); // Lokasi file di server
+        $table->string('status')->default('pending'); // pending, valid, invalid
+        $table->text('catatan_verifikasi')->nullable();
+        
+        // Verifikator (Staff Gudang) boleh null dulu karena baru diinput Admin
+        $table->foreignId('verifikator_id')->nullable()->constrained('users'); 
+        
         $table->timestamps();
     });
 }

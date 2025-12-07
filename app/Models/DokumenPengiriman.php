@@ -8,26 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 class DokumenPengiriman extends Model
 {
     use HasFactory;
-    // TAMBAHKAN BARIS INI (PENTING!)
-    protected $table = 'dokumen_pengiriman'; 
+
+    protected $table = 'dokumen_pengiriman';
     protected $primaryKey = 'id_dokumen';
 
     protected $fillable = [
         'order_id',
-        'nomor_resi',
-        'kelengkapan_dokumen',
-        'path_dokumen',
-        'staff_gudang_id',
-        'status',
+        'jenis_dokumen',       // B/L, Manifest, Invoice, dll
+        'path_file',           // Lokasi penyimpanan di storage
+        'status',              // pending, valid, invalid
+        'catatan_verifikasi',  // Catatan jika ditolak oleh Gudang
+        'verifikator_id',      // Siapa yang memvalidasi (User ID Staff Gudang)
+        'kelengkapan_dokumen', // Keterangan tambahan
     ];
 
+    // Relasi ke Order (Induk)
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id');
     }
 
-    public function verificator()
+    // Relasi ke User (Staff Gudang yang memvalidasi)
+    public function verifikator()
     {
-        return $this->belongsTo(StaffGudang::class, 'staff_gudang_id');
+        return $this->belongsTo(User::class, 'verifikator_id');
     }
 }
