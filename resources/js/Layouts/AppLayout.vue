@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3'; // [PERBAIKAN] Tambahkan 'router' disini
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user || { name: 'Guest', role: 'unknown', avatar_url: '' });
@@ -22,7 +22,7 @@ const menus = {
         { label: 'Drivers', route: '#', icon: 'User' },
         { label: 'Maps', route: '#', icon: 'Map' },
     ],
-    manajer_operasional: [
+    manajer: [ // [PERBAIKAN] Pastikan role ini sesuai database ('manajer')
         { label: 'Summary', route: 'manajer.dashboard', icon: 'TrendingUp' },
         { label: 'Finance', route: '#', icon: 'DollarSign' },
         { label: 'Audit', route: '#', icon: 'FileText' },
@@ -31,23 +31,24 @@ const menus = {
 
 const currentMenu = computed(() => menus[user.value.role] || []);
 
+// [PERBAIKAN] Fungsi logout menggunakan router import
 const logout = () => {
-    import('@inertiajs/vue3').then(({ router }) => router.post('/logout'));
+    router.post('/logout');
+    onFinish: () => {
+       window.location.replace('/');
+        }
 };
 </script>
 
 <template>
     <div class="min-h-screen bg-brand-grey text-brand-black font-sans flex overflow-hidden relative">
         
-        <!-- Grid Pattern (Halus) -->
         <div class="fixed inset-0 z-0 bg-grid-red pointer-events-none opacity-40"></div>
 
-        <!-- === SIDEBAR (Solid White & Red Accent) === -->
         <aside 
             class="fixed z-40 top-0 left-0 h-full bg-white border-r border-gray-200 transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
             :class="isSidebarOpen ? 'w-72' : 'w-20'"
         >
-            <!-- Logo -->
             <div class="h-24 flex items-center justify-center border-b border-gray-100 relative">
                 <div class="flex items-center gap-3 transition-all duration-300" :class="{ 'scale-0 opacity-0 absolute': !isSidebarOpen }">
                     <div class="w-10 h-10 bg-brand-red flex items-center justify-center text-white shadow-lg">
@@ -66,7 +67,6 @@ const logout = () => {
                 </button>
             </div>
 
-            <!-- Menu -->
             <nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto custom-scrollbar">
                 <div v-if="isSidebarOpen" class="px-2 mb-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest font-display">
                     Main Menu
@@ -82,7 +82,6 @@ const logout = () => {
                         : 'text-gray-500 hover:bg-red-50 hover:text-brand-red'"
                 >
                     <div class="w-6 h-6 flex items-center justify-center shrink-0">
-                        <!-- Simple Icon Placeholder -->
                         <div class="w-2 h-2 rounded-sm bg-current transition-all group-hover:scale-125"></div>
                     </div>
                     
@@ -93,7 +92,6 @@ const logout = () => {
                 </Link>
             </nav>
 
-            <!-- Profile -->
             <div class="p-4 border-t border-gray-100 bg-gray-50">
                 <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white hover:shadow-sm transition-all cursor-pointer group" @click="logout">
                     <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.name}&background=FF2A2A&color=fff`" 
@@ -107,13 +105,14 @@ const logout = () => {
                     </div>
                     
                     <div class="text-gray-300 group-hover:text-brand-red transition-colors" v-if="isSidebarOpen">
-                        ↩
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- === MAIN CONTENT === -->
         <main 
             class="flex-1 transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) p-6 h-screen overflow-y-auto relative z-10"
             :class="isSidebarOpen ? 'ml-72' : 'ml-20'"

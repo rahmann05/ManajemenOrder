@@ -31,10 +31,9 @@ Route::middleware('guest')->group(function () {
 });
 
 // --- AUTHENTICATED ROUTES (KHUSUS YANG SUDAH LOGIN) ---
-Route::middleware('auth')->group(function () {
-    // Logout
+Route::middleware(['auth', 'prevent-back-history'])->group(function () {
+    
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
-
     // DASHBOARD ROUTES (Penamaan sesuai AppLayout.vue)
     
     // 1. Admin
