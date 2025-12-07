@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth; // Tambahkan ini
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\OrderController; // [PENTING: TAMBAHKAN INI]
+use App\Http\Controllers\OrderController; 
 use Inertia\Inertia;
 
 // --- HALAMAN DEPAN (LANDING PAGE) ---
