@@ -9,10 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
+    public function up(): void
 {
-    Schema::create('admins', function (Blueprint $table) {
-        $table->id('id_admin'); // Primary Key sesuai SDD
+    Schema::create('staff_armada', function (Blueprint $table) {
+        $table->id('id_staff_armada');
+        $table->string('area_operasi'); // Sesuai SDD
         $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->timestamps();
     });
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('admins');
+        Schema::dropIfExists('staff_armada');
     }
 };
