@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('pengirimans', function (Blueprint $table) {
+    Schema::create('pengiriman', function (Blueprint $table) {
         $table->id('id_pengiriman');
         // Relasi ke Order (Penting agar tahu pengiriman ini untuk order mana)
-        $table->foreignId('order_id')->constrained('orders', 'id_order')->onDelete('cascade');
+        $table->foreignId('order_id')->constrained('order', 'id_order')->onDelete('cascade');
         
         // Relasi ke Armada & Supir (sesuai SDD)
-        $table->foreignId('armada_id')->constrained('armadas', 'id_armada');
-        $table->foreignId('supir_id')->constrained('supirs', 'id_supir');
+        $table->foreignId('armada_id')->constrained('armada', 'id_armada');
+        $table->foreignId('supir_id')->constrained('supir', 'id_supir');
         
         $table->string('lokasi_terakhir')->nullable();
         $table->string('status_terakhir');
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengirimen');
+        Schema::dropIfExists('pengiriman');
     }
 };

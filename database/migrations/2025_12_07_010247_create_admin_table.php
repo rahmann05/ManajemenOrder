@@ -9,14 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+   public function up(): void
 {
-    Schema::create('supirs', function (Blueprint $table) {
-        $table->id('id_supir');
-        $table->string('nama_supir');
-        $table->string('nomor_sim');
-        $table->string('nomor_telepon');
-        $table->string('status'); // Aktif/Nonaktif
+    Schema::create('admin', function (Blueprint $table) {
+        $table->id('id_admin'); // Primary Key sesuai SDD
+        $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->timestamps();
     });
 }
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('supirs');
+        Schema::dropIfExists('admin');
     }
 };

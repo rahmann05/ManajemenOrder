@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('armadas', function (Blueprint $table) {
-        $table->id('id_armada');
-        $table->string('nomor_plat')->unique();
-        $table->string('jenis_kendaraan');
-        $table->integer('kapasitas'); // Menggunakan Integer sesuai SDD
-        $table->string('status'); // Tersedia, Terpakai, Perbaikan
+    Schema::create('staff_gudang', function (Blueprint $table) {
+        $table->id('id_staff_gudang');
+        $table->string('area_gudang'); // Sesuai SDD
+        $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->timestamps();
     });
 }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('armadas');
+        Schema::dropIfExists('staff_gudang');
     }
 };

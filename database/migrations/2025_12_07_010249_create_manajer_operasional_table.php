@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('staff_gudangs', function (Blueprint $table) {
-        $table->id('id_staff_gudang');
-        $table->string('area_gudang'); // Sesuai SDD
+    Schema::create('manajer_operasional', function (Blueprint $table) {
+        $table->id('id_manajer');
         $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->timestamps();
     });
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('staff_gudangs');
+        Schema::dropIfExists('manajer_operasional');
     }
 };
