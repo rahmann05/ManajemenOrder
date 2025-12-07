@@ -1,8 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue'; // Import Layout Anda
+import AppLayout from '@/Layouts/AppLayout.vue';
 
-// Menerima data dari Controller
 defineProps({
     stats: Object,
     recent_orders: Array,
@@ -12,19 +11,27 @@ defineProps({
 <template>
     <AppLayout>
         
-        <div class="mb-8 flex justify-between items-end">
+        <div class="mb-8 flex flex-col md:flex-row justify-between items-end gap-4">
             <div>
                 <h1 class="text-3xl font-display font-bold text-brand-black">Dashboard Overview</h1>
                 <p class="text-gray-500 mt-1 font-medium">Ringkasan aktivitas logistik hari ini.</p>
             </div>
-            <div class="text-sm font-bold text-brand-red bg-red-50 px-4 py-2 rounded-lg border border-red-100">
-                {{ new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
+            
+            <div class="flex gap-3 items-center">
+                <div class="hidden md:block text-xs font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-4 py-3 rounded-xl border border-gray-100">
+                    {{ new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }) }}
+                </div>
+
+                <Link :href="route('order.create')" class="btn-red px-6 py-3 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-red-500/30 group transition-all">
+                    <span class="text-lg group-hover:rotate-90 transition-transform duration-300">+</span> 
+                    Input Order
+                </Link>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             
-            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
                 <div class="relative z-10">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 font-display">Order Baru</p>
                     <p class="text-4xl font-black mt-2 text-brand-black">{{ stats.order_baru }}</p>
@@ -34,7 +41,7 @@ defineProps({
                 </div>
             </div>
 
-            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
                 <div class="relative z-10">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 font-display">Selesai Hari Ini</p>
                     <p class="text-4xl font-black mt-2 text-brand-black">{{ stats.order_selesai_hari_ini }}</p>
@@ -44,7 +51,7 @@ defineProps({
                 </div>
             </div>
 
-            <div class="bg-brand-red text-white p-6 rounded-2xl shadow-xl shadow-red-500/30 relative overflow-hidden group">
+            <div class="bg-brand-red text-white p-6 rounded-2xl shadow-xl shadow-red-500/30 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
                 <div class="relative z-10">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-white/60 font-display">Dalam Pengiriman</p>
                     <p class="text-4xl font-black mt-2">{{ stats.dalam_pengiriman }}</p>
@@ -52,7 +59,7 @@ defineProps({
                 <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/20 rounded-full blur-2xl animate-pulse"></div>
             </div>
 
-            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
                 <div class="relative z-10">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 font-display">Total Order</p>
                     <p class="text-4xl font-black mt-2 text-brand-black">{{ stats.total_order }}</p>
