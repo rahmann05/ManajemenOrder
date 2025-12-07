@@ -9,11 +9,11 @@ class Order extends Model
 {
     use HasFactory;
 
-    // [WAJIB ADA] Definisikan nama tabel secara manual
+    // Pastikan nama tabel benar
     protected $table = 'order'; 
-
     protected $primaryKey = 'id_order';
 
+    // PASTIKAN SEMUA KOLOM INI ADA (Jangan ada yang kurang)
     protected $fillable = [
         'nomor_order',
         'tanggal_order',
@@ -34,7 +34,8 @@ class Order extends Model
         'current_lng',
         'status_order',
     ];
-    // Relasi: Satu order punya BANYAK dokumen (One to Many)
+
+    // Relasi
     public function dokumen()
     {
         return $this->hasMany(DokumenPengiriman::class, 'order_id');

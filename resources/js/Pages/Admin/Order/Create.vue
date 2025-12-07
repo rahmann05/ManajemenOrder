@@ -47,12 +47,22 @@ const handleFileUpload = (event, index) => {
 };
 
 const submit = () => {
-    // Pindahkan data dari dokumenList ke form.dokumen sebelum submit
-    // Karena Inertia tidak bisa langsung serialize object kompleks yang berisi File di dalam array
-    form.dokumen = dokumenList.value;
+    // 1. Mapping Eksplisit: Pastikan 'file' benar-benar diambil
+    form.dokumen = dokumenList.value.map((item, index) => {
+        // Debugging: Cek di console apakah file ada
+        if (!item.file) console.warn(`Dokumen baris ke-${index+1} tidak memiliki file!`);
+        
+        return {
+            jenis: item.jenis,
+            file: item.file // Harus berupa File object (bukan null)
+        };
+    });
 
+    // 2. Kirim dengan forceFormData
     form.post('/admin/order', {
-        forceFormData: true,
+        forceFormData: true, // Wajib untuk upload file
+        onSuccess: () => console.log("Berhasil disimpan!"),
+        onError: (errors) => console.error("Gagal Validasi:", errors),
     });
 };
 </script>
@@ -62,17 +72,37 @@ const submit = () => {
         <Head title="Input Kargo Baru" />
 
         <div class="mb-8">
-            <h1 class="text-3xl font-display font-bold text-brand-black">Input Kargo / Order Baru</h1>
+            <h1 class="text-3xl font-display font-bold text-brand-black">Input Kargo</h1>
             <p class="text-gray-500 mt-1 font-medium">Lengkapi data muatan, peta lokasi, dan dokumen legalitas.</p>
         </div>
 
         <div class="glass-panel p-8 rounded-2xl max-w-6xl">
             <form @submit.prevent="submit" class="space-y-8">
-                
+              <div v-if="Object.keys(form.errors).length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+    <div class="flex">
+        <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+        </div>
+        <div class="ml-3">
+            <h3 class="text-sm leading-5 font-medium text-red-800">
+                Terdapat {{ Object.keys(form.errors).length }} error pada form:
+            </h3>
+            <div class="mt-2 text-sm leading-5 text-red-700">
+                <ul class="list-disc pl-5 space-y-1">
+                    <li v-for="(error, key) in form.errors" :key="key">
+                        <span class="font-bold">{{ key }}:</span> {{ error }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
                 <div>
                     <h3 class="text-lg font-bold text-brand-red mb-4 flex items-center gap-2">
                         <span class="w-6 h-6 rounded-full bg-brand-red text-white flex items-center justify-center text-xs">1</span>
-                        Rute & Lokasi (Geo-Tagging)
+                        Rute & Lokasi
                     </h3>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -129,8 +159,8 @@ const submit = () => {
                         <div class="space-y-2">
                             <label class="text-xs font-bold uppercase text-gray-500">Jalur</label>
                             <select v-model="form.jalur_pengiriman" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none">
-                                <option value="Laut">Laut (Sea)</option>
-                                <option value="Udara">Udara (Air)</option>
+                                <option value="Laut">Laut</option>
+                                <option value="Udara">Udara</option>
                             </select>
                         </div>
                         <div class="space-y-2">
@@ -144,11 +174,11 @@ const submit = () => {
                             </select>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase text-gray-500">Berat (Kg/Ton)</label>
+                            <label class="text-xs font-bold uppercase text-gray-500">Berat (Ton)</label>
                             <input v-model="form.total_berat" type="number" step="0.01" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase text-gray-500">Volume (CBM)</label>
+                            <label class="text-xs font-bold uppercase text-gray-500">Volume</label>
                             <input v-model="form.total_volume" type="number" step="0.01" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none">
                         </div>
                     </div>
@@ -172,7 +202,7 @@ const submit = () => {
                                     <option value="Manifest">Manifest</option>
                                     <option value="Commercial Invoice">Commercial Invoice</option>
                                     <option value="Packing List">Packing List</option>
-                                    <option value="PIB">Pemberitahuan Impor Barang (PIB)</option>
+                                    <option value="PIB">Pemberitahuan Impor Barang</option>
                                     <option value="Surat Jalan">Surat Jalan</option>
                                     <option value="Lainnya">Lainnya</option>
                                 </select>

@@ -39,7 +39,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     // [FITUR ORDER ADMIN]
     Route::get('/admin/order/create', [OrderController::class, 'create'])->name('order.create');
     Route::post('/admin/order', [OrderController::class, 'store'])->name('order.store');
-
+    Route::get('/admin/order/{id}', [OrderController::class, 'show'])->name('order.show');
     // 2. Staff Gudang
     Route::get('/dashboard/gudang', function () { 
         return Inertia::render('Dashboard/Gudang'); 
