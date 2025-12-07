@@ -22,8 +22,8 @@ defineProps({
                     {{ new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }) }}
                 </div>
 
-                <Link :href="route('order.create')" class="btn-red px-6 py-3 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-red-500/30 group transition-all">
-                    <span class="text-lg group-hover:rotate-90 transition-transform duration-300">+</span> 
+                <Link href="/admin/order/create" class="btn-red px-6 py-3 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-red-500/30 group transition-all">
+                <span class="text-lg group-hover:rotate-90 transition-transform duration-300">+</span> 
                     Input Order
                 </Link>
             </div>
