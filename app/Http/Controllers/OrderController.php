@@ -6,82 +6,100 @@ use App\Models\Order;
 use App\Models\DokumenPengiriman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log; // [PENTING] Tambahkan Log untuk debugging
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
+    /**
+     * Tampilkan Halaman Form Input Order
+     */
     public function create()
     {
         return Inertia::render('Admin/Order/Create');
     }
 
+    /**
+     * Tampilkan Detail Order & Tracking
+     */
     public function show($id)
     {
+        // Ambil order beserta dokumen relasinya
         $order = Order::with('dokumen')->findOrFail($id);
+
         return Inertia::render('Admin/Order/Show', [
             'order' => $order
         ]);
     }
 
+    /**
+     * Simpan Data Order ke Database
+     */
     public function store(Request $request)
     {
         // 1. VALIDASI DATA
         $validated = $request->validate([
-            'jalur_pengiriman' => 'required',
-            'jenis_muatan' => 'required',
-            'pengirim' => 'required',
-            'alamat_pengirim' => 'required',
-            'penerima' => 'required',
-            'alamat_penerima' => 'required',
+            // 'jalur_pengiriman' TIDAK divalidasi karena default 'Laut'
+            'jenis_muatan' => 'required|string',
             
-            // Validasi Koordinat (Nullable jika user tidak pakai map)
+            // Data Pengirim & Penerima
+            'pengirim' => 'required|string',
+            'alamat_pengirim' => 'required|string',
+            'penerima' => 'required|string',
+            'alamat_penerima' => 'required|string',
+            
+            // Koordinat Peta (Nullable jika tidak dipilih)
             'origin_lat' => 'nullable|numeric',
             'origin_lng' => 'nullable|numeric',
             'destination_lat' => 'nullable|numeric',
             'destination_lng' => 'nullable|numeric',
 
-            'total_berat' => 'required|numeric',
-            'total_volume' => 'nullable|numeric',
+            // Data Fisik (Ton & CBM)
+            'total_berat' => 'required|numeric', 
+            'total_volume' => 'nullable|numeric', 
+            
             'tanggal_order' => 'required|date',
             
             // Validasi Array Dokumen (Multi-file)
-            'dokumen' => 'nullable|array', // Diubah jadi nullable agar tidak error jika kosong dulu
+            'dokumen' => 'nullable|array', 
             'dokumen.*.jenis' => 'required_with:dokumen',
+            // File boleh kosong saat validasi awal, dicek manual di loop
             'dokumen.*.file' => 'nullable|file|mimes:pdf,jpg,png,jpeg,doc|max:10240'
         ]);
 
         DB::transaction(function () use ($request, $validated) {
-            // 2. GENERATE NOMOR ORDER (SML-YYYYMM-XXX)
+            // 2. GENERATE NOMOR ORDER (Format: SML-YYYYMM-XXX)
             $count = Order::whereMonth('created_at', now()->month)->count() + 1;
             $noOrder = 'SML-' . now()->format('Ym') . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
 
-            // 3. SIMPAN ORDER + KOORDINAT
+            // 3. SIMPAN ORDER
             $order = Order::create([
                 'nomor_order' => $noOrder,
                 'tanggal_order' => $validated['tanggal_order'],
+                
+                // Data Pengirim
                 'pengirim' => $validated['pengirim'],
                 'alamat_pengirim' => $validated['alamat_pengirim'],
-                
-                // Simpan Koordinat
                 'origin_lat' => $validated['origin_lat'] ?? null,
                 'origin_lng' => $validated['origin_lng'] ?? null,
                 
+                // Data Penerima
                 'penerima' => $validated['penerima'],
                 'alamat_penerima' => $validated['alamat_penerima'],
-                
-                // Simpan Koordinat Tujuan
                 'destination_lat' => $validated['destination_lat'] ?? null,
                 'destination_lng' => $validated['destination_lng'] ?? null,
 
-                'jalur_pengiriman' => $validated['jalur_pengiriman'],
+                // Spesifikasi Logistik (Hardcode Jalur Laut)
+                'jalur_pengiriman' => 'Laut', 
                 'jenis_muatan' => $validated['jenis_muatan'],
                 'total_berat' => $validated['total_berat'],
                 'total_volume' => $validated['total_volume'],
+                
+                // Status Awal
                 'posisi_sekarang' => 'Processing at Origin',
                 'status_order' => 'menunggu_validasi_dokumen',
                 
-                // Set posisi tracking awal = lokasi asal
+                // Tracking Posisi Awal = Lokasi Asal
                 'current_lat' => $validated['origin_lat'] ?? null,
                 'current_lng' => $validated['origin_lng'] ?? null,
             ]);
@@ -94,7 +112,9 @@ class OrderController extends Controller
                         
                         $file = $doc['file'];
                         // Nama file unik: ORDERID_JENIS_TIMESTAMP.ext
-                        $filename = strtoupper(str_replace(' ', '_', $doc['jenis'])) . '_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+                        // str_replace agar nama file bersih dari spasi
+                        $jenisBersih = strtoupper(str_replace([' ', '/', '\\'], '_', $doc['jenis']));
+                        $filename = $jenisBersih . '_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
                         
                         $path = $file->storeAs(
                             'dokumen-order/' . $order->id_order, 

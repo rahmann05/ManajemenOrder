@@ -9,24 +9,28 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+   public function up(): void
 {
     Schema::create('order', function (Blueprint $table) {
         $table->id('id_order');
-        $table->string('nomor_order')->unique(); // Tracking ID (misal: SML-2025-001)
+        $table->string('nomor_order')->unique();
         $table->date('tanggal_order');
         
         // Data Pengirim & Penerima
         $table->string('pengirim');
-        $table->text('alamat_pengirim'); // Bisa berupa Gudang Asal / Pelabuhan Asal
+        $table->text('alamat_pengirim');
         $table->string('penerima');
-        $table->text('alamat_penerima'); // Gudang Tujuan / Pelabuhan Tujuan
+        $table->text('alamat_penerima');
         
         // Spesifikasi Logistik
-        $table->enum('jalur_pengiriman', ['Laut', 'Udara']); 
-        $table->string('jenis_muatan'); // Container 20ft, 40ft, LCL, Breakbulk, Kargo Udara
-        $table->float('total_berat'); // Kg / Ton
-        $table->float('total_volume')->nullable(); // CBM (Penting untuk kargo laut)
+        // [UPDATE] Default 'Laut', jadi tidak perlu diinput user lagi
+        $table->string('jalur_pengiriman')->default('Laut'); 
+        
+        $table->string('jenis_muatan');
+        
+        // [UPDATE] Pakai double untuk angka desimal (Ton & CBM)
+        $table->double('total_berat', 10, 2); // Contoh: 12.50 Ton
+        $table->double('total_volume', 10, 2)->nullable(); // Contoh: 15.20 CBM
         
         // Tracking & Status
         $table->string('posisi_sekarang')->default('Gudang Asal / Port of Loading');

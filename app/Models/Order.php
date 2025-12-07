@@ -19,22 +19,18 @@ class Order extends Model
         'tanggal_order',
         'pengirim',
         'alamat_pengirim',
-        'origin_lat',
-        'origin_lng',
+        'origin_lat', 'origin_lng', // Dari migrasi add_coordinates
         'penerima',
         'alamat_penerima',
-        'destination_lat',
-        'destination_lng',
+        'destination_lat', 'destination_lng', // Dari migrasi add_coordinates
         'jalur_pengiriman',
         'jenis_muatan',
         'total_berat',
-        'total_volume',
+        'total_volume', // [PASTIKAN INI ADA]
         'posisi_sekarang',
-        'current_lat',
-        'current_lng',
+        'current_lat', 'current_lng', // Dari migrasi add_coordinates
         'status_order',
     ];
-
     // Relasi
     public function dokumen()
     {
