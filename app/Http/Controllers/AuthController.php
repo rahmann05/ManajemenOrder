@@ -53,11 +53,14 @@ class AuthController extends Controller
     /**
      * Memproses Logout
      */
+ 
     public function destroy(Request $request)
     {
         Auth::logout();
+        
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+        
+        return redirect('/'); // Kembali ke Halaman Utama/Landing Page
     }
 }
