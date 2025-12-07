@@ -1,13 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;      // [PENTING: Jangan lupa di-import]
-use App\Http\Controllers\DashboardController; // [PENTING: Jangan lupa di-import]
+use Illuminate\Support\Facades\Auth; // Tambahkan ini
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController; 
 use Inertia\Inertia;
 
 // --- HALAMAN DEPAN (LANDING PAGE) ---
 Route::get('/', function () {
-    // Jika user sudah login, langsung arahkan ke dashboard mereka (opsional, tapi UX yang baik)
     if (Auth::check()) {
         $role = Auth::user()->role;
         return match ($role) {
@@ -21,24 +22,24 @@ Route::get('/', function () {
     return Inertia::render('Welcome'); 
 })->name('home');
 
-// --- GUEST ROUTES (KHUSUS YANG BELUM LOGIN) ---
+// --- GUEST ROUTES ---
 Route::middleware('guest')->group(function () {
-    // Menampilkan Halaman Login
     Route::get('/login', [AuthController::class, 'create'])->name('login');
-    
-    // Memproses Data Login
     Route::post('/login', [AuthController::class, 'store']);
 });
 
-// --- AUTHENTICATED ROUTES (KHUSUS YANG SUDAH LOGIN) ---
+// --- AUTH ROUTES ---
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
-    // DASHBOARD ROUTES (Penamaan sesuai AppLayout.vue)
-    
+
     // 1. Admin
     Route::get('/dashboard/admin', [DashboardController::class, 'index'])->name('admin.dashboard');
     
+    // [FITUR ORDER ADMIN]
+    Route::get('/admin/order/create', [OrderController::class, 'create'])->name('order.create');
+    Route::post('/admin/order', [OrderController::class, 'store'])->name('order.store');
+
     // 2. Staff Gudang
     Route::get('/dashboard/gudang', function () { 
         return Inertia::render('Dashboard/Gudang'); 
@@ -49,7 +50,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         return Inertia::render('Dashboard/Armada'); 
     })->name('armada.dashboard');
     
-    // 4. Manajer Operasional
+    // 4. Manajer
     Route::get('/dashboard/manajer', function () { 
         return Inertia::render('Dashboard/Manajer'); 
     })->name('manajer.dashboard');
