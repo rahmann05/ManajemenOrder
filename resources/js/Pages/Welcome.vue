@@ -84,7 +84,7 @@ const handleMouseMove = (e) => {
 
                 <div class="flex flex-col md:flex-row gap-4 justify-center">
                     <button @click="scrollToLogin" class="btn-red px-10 py-4 rounded-full text-lg flex items-center gap-2 group">
-                        Akses Sistem 
+                        Lanjut 
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </button>
                 </div>
@@ -120,16 +120,6 @@ const handleMouseMove = (e) => {
                     </div>
 
                     <div class="relative z-10">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg">
-                                <p class="text-xs font-bold uppercase opacity-70">Active Users</p>
-                                <p class="text-2xl font-mono font-bold">1,240</p>
-                            </div>
-                            <div class="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg">
-                                <p class="text-xs font-bold uppercase opacity-70">System</p>
-                                <p class="text-2xl font-mono font-bold">Online</p>
-                            </div>
-                        </div>
                         <p class="text-sm opacity-80">© 2025 SISMODO Logistics. All rights reserved.</p>
                     </div>
                 </div>
@@ -178,7 +168,7 @@ const handleMouseMove = (e) => {
                             :disabled="form.processing"
                             class="w-full btn-red py-4 rounded-lg mt-6 text-lg tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {{ form.processing ? 'Memproses...' : 'Masuk Dashboard' }}
+                            {{ form.processing ? 'Memproses...' : 'Login' }}
                         </button>
                     </form>
                 </div>
