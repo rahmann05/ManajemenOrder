@@ -8,27 +8,35 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
-    protected $table = 'order'; 
-    protected $primaryKey = 'id_order'; 
 
+    // Pastikan nama tabel benar
+    protected $table = 'order'; 
+    protected $primaryKey = 'id_order';
+
+    // PASTIKAN SEMUA KOLOM INI ADA (Jangan ada yang kurang)
     protected $fillable = [
+        'nomor_order',
         'tanggal_order',
         'pengirim',
         'alamat_pengirim',
-        'jenis_pengiriman',
-        'total_berat',
+        'origin_lat', 'origin_lng', // Dari migrasi add_coordinates
         'penerima',
         'alamat_penerima',
+        'destination_lat', 'destination_lng', // Dari migrasi add_coordinates
+        'jalur_pengiriman',
+        'jenis_muatan',
+        'total_berat',
+        'total_volume', // [PASTIKAN INI ADA]
+        'posisi_sekarang',
+        'current_lat', 'current_lng', // Dari migrasi add_coordinates
         'status_order',
     ];
-
-    // Relasi: Satu order punya satu dokumen pengiriman
+    // Relasi
     public function dokumen()
     {
-        return $this->hasOne(DokumenPengiriman::class, 'order_id');
+        return $this->hasMany(DokumenPengiriman::class, 'order_id');
     }
 
-    // Relasi: Satu order bisa memiliki riwayat pengiriman
     public function pengiriman()
     {
         return $this->hasMany(Pengiriman::class, 'order_id');

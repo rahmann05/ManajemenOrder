@@ -23,8 +23,8 @@ defineProps({
                 </div>
 
                 <Link href="/admin/order/create" class="btn-red px-6 py-3 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-red-500/30 group transition-all">
-                <span class="text-lg group-hover:rotate-90 transition-transform duration-300">+</span> 
-                    Input Order
+                    <span class="text-lg group-hover:rotate-90 transition-transform duration-300">+</span> 
+                    Input Kargo
                 </Link>
             </div>
         </div>
@@ -77,42 +77,60 @@ defineProps({
                 <table class="w-full text-left text-sm text-gray-600">
                     <thead class="bg-gray-50/50 text-[10px] uppercase font-bold text-gray-400 tracking-wider font-display">
                         <tr>
-                            <th class="px-8 py-4">ID Order</th>
+                            <th class="px-8 py-4">No. Order</th>
                             <th class="px-8 py-4">Pengirim</th>
                             <th class="px-8 py-4">Penerima</th>
-                            <th class="px-8 py-4">Jenis</th>
+                            <th class="px-8 py-4">Kargo</th>
                             <th class="px-8 py-4">Status</th>
                             <th class="px-8 py-4">Tanggal</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         <tr v-for="order in recent_orders" :key="order.id_order" class="hover:bg-red-50/50 transition duration-200">
-                            <td class="px-8 py-4 font-bold text-brand-black">#{{ order.id_order }}</td>
-                            <td class="px-8 py-4 font-medium">{{ order.pengirim }}</td>
-                            <td class="px-8 py-4 font-medium">{{ order.penerima }}</td>
+                            
+                            <td class="px-8 py-4 font-bold text-brand-black">
+                                <Link :href="`/admin/order/${order.id_order}`" class="hover:text-brand-red hover:underline decoration-dashed underline-offset-4 transition-colors">
+                                    {{ order.nomor_order || '#' + order.id_order }}
+                                </Link>
+                            </td>
+
+                            <td class="px-8 py-4 font-medium">
+                                <div class="truncate max-w-[150px]" :title="order.pengirim">{{ order.pengirim }}</div>
+                                <div class="text-xs text-gray-400 truncate max-w-[150px]">{{ order.alamat_pengirim }}</div>
+                            </td>
+                            <td class="px-8 py-4 font-medium">
+                                <div class="truncate max-w-[150px]" :title="order.penerima">{{ order.penerima }}</div>
+                                <div class="text-xs text-gray-400 truncate max-w-[150px]">{{ order.alamat_penerima }}</div>
+                            </td>
                             <td class="px-8 py-4">
-                                <span class="px-3 py-1 bg-white border border-gray-200 rounded-md text-[10px] font-bold uppercase tracking-wide">
-                                    {{ order.jenis_pengiriman }}
-                                </span>
+                                <div class="flex flex-col gap-1">
+                                    <span class="inline-block px-2 py-0.5 bg-white border border-gray-200 rounded text-[10px] font-bold uppercase tracking-wide w-fit">
+                                        {{ order.jalur_pengiriman }}
+                                    </span>
+                                    <span class="text-xs text-gray-500">{{ order.jenis_muatan }}</span>
+                                </div>
                             </td>
                             <td class="px-8 py-4">
                                 <span 
-                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border"
                                     :class="{
-                                        'bg-yellow-100 text-yellow-700': order.status_order === 'menunggu_verifikasi',
-                                        'bg-blue-100 text-blue-700': order.status_order === 'proses',
-                                        'bg-green-100 text-green-700': order.status_order === 'selesai',
+                                        'bg-yellow-50 text-yellow-700 border-yellow-200': order.status_order === 'menunggu_verifikasi' || order.status_order === 'menunggu_validasi_dokumen',
+                                        'bg-blue-50 text-blue-700 border-blue-200': order.status_order === 'proses',
+                                        'bg-green-50 text-green-700 border-green-200': order.status_order === 'selesai',
                                     }"
                                 >
                                     <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                                    {{ order.status_order.replace('_', ' ') }}
+                                    {{ order.status_order ? order.status_order.replace(/_/g, ' ') : 'Pending' }}
                                 </span>
                             </td>
-                            <td class="px-8 py-4 text-gray-400 font-medium">{{ order.tanggal_order }}</td>
+                            <td class="px-8 py-4 text-gray-400 font-medium whitespace-nowrap">{{ order.tanggal_order }}</td>
                         </tr>
                         <tr v-if="recent_orders.length === 0">
-                            <td colspan="6" class="px-8 py-12 text-center text-gray-400 italic">
-                                Belum ada data order yang masuk.
+                            <td colspan="6" class="px-8 py-12 text-center text-gray-400 italic bg-gray-50/30">
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <span class="text-2xl">📦</span>
+                                    <span>Belum ada data kargo yang masuk.</span>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
